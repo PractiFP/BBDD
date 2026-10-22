@@ -1,0 +1,144 @@
+erDiagram
+    USUARIOS {
+        int id_usuario PK
+        varchar nombre "NOT NULL"
+        varchar apellidos "NOT NULL"
+        varchar email UK "NOT NULL"
+        varchar password "NOT NULL"
+        enum rol "NOT NULL: ALUMNO EMPRESA ADMIN"
+        datetime fecha_registro "NOT NULL"
+    }
+
+    ALUMNOS {
+        int id_alumno PK
+        int id_usuario FK, UK
+        varchar ciclo "NOT NULL"
+        int curso "NOT NULL"
+        varchar centro "NOT NULL"
+        varchar localidad
+        text descripcion
+        varchar cv
+    }
+
+    EMPRESAS {
+        int id_empresa PK
+        int id_usuario FK, UK
+        varchar nombre "NOT NULL"
+        text descripcion
+        varchar web
+        varchar localidad "NOT NULL"
+        varchar direccion
+        decimal latitud
+        decimal longitud
+        varchar telefono
+        boolean verificada
+    }
+
+    OFERTAS {
+        int id_oferta PK
+        int id_empresa FK
+        varchar titulo "NOT NULL"
+        text descripcion "NOT NULL"
+        varchar ciclo "NOT NULL"
+        varchar localidad "NOT NULL"
+        enum modalidad "NOT NULL"
+        boolean remunerada "NOT NULL"
+        decimal salario
+        int plazas "NOT NULL"
+        datetime fecha_publicacion "NOT NULL"
+        date fecha_limite
+        boolean activa "NOT NULL"
+    }
+
+    TECNOLOGIAS {
+        int id_tecnologia PK
+        varchar nombre UK "NOT NULL"
+    }
+
+    ALUMNO_TECNOLOGIA {
+        int id_alumno PK, FK
+        int id_tecnologia PK, FK
+        enum nivel "NOT NULL"
+    }
+
+    OFERTA_TECNOLOGIA {
+        int id_oferta PK, FK
+        int id_tecnologia PK, FK
+        boolean obligatoria "NOT NULL"
+    }
+
+    CANDIDATURAS {
+        int id_candidatura PK
+        int id_alumno FK
+        int id_oferta FK
+        datetime fecha "NOT NULL"
+        enum estado "NOT NULL"
+    }
+
+    FAVORITOS {
+        int id_alumno PK, FK
+        int id_oferta PK, FK
+        datetime fecha "NOT NULL"
+    }
+
+    PROYECTOS {
+        int id_proyecto PK
+        int id_alumno FK
+        varchar titulo "NOT NULL"
+        text descripcion "NOT NULL"
+        varchar url_github
+        varchar url_demo
+        varchar url_imagen
+        datetime fecha_creacion "NOT NULL"
+    }
+
+    PROYECTO_TECNOLOGIA {
+        int id_proyecto PK, FK
+        int id_tecnologia PK, FK
+    }
+
+    VALORACIONES {
+        int id_valoracion PK
+        int id_alumno FK
+        int id_empresa FK
+        int puntuacion "NOT NULL: 1-5"
+        text comentario
+        datetime fecha "NOT NULL"
+        boolean aprobada "NOT NULL"
+    }
+
+    FASES_SELECCION {
+        int id_fase PK
+        int id_oferta FK
+        varchar nombre "NOT NULL"
+        text descripcion
+        int orden "NOT NULL"
+        int duracion_dias
+        boolean obligatoria "NOT NULL"
+    }
+
+    USUARIOS ||--o| ALUMNOS : tiene
+    USUARIOS ||--o| EMPRESAS : tiene
+
+    EMPRESAS ||--o{ OFERTAS : publica
+
+    ALUMNOS ||--o{ ALUMNO_TECNOLOGIA : domina
+    TECNOLOGIAS ||--o{ ALUMNO_TECNOLOGIA : incluye
+
+    OFERTAS ||--o{ OFERTA_TECNOLOGIA : requiere
+    TECNOLOGIAS ||--o{ OFERTA_TECNOLOGIA : incluye
+
+    ALUMNOS ||--o{ CANDIDATURAS : presenta
+    OFERTAS ||--o{ CANDIDATURAS : recibe
+
+    ALUMNOS ||--o{ FAVORITOS : guarda
+    OFERTAS ||--o{ FAVORITOS : es_guardada
+
+    ALUMNOS ||--o{ PROYECTOS : crea
+    PROYECTOS ||--o{ PROYECTO_TECNOLOGIA : utiliza
+    TECNOLOGIAS ||--o{ PROYECTO_TECNOLOGIA : aparece
+
+    ALUMNOS ||--o{ VALORACIONES : escribe
+    EMPRESAS ||--o{ VALORACIONES : recibe
+
+    OFERTAS ||--o{ FASES_SELECCION : define
