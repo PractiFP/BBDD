@@ -1,0 +1,144 @@
+
+classDiagram
+    class USUARIOS {
+        +INT id_usuario PK
+        +VARCHAR nombre
+        +VARCHAR apellidos
+        +VARCHAR email UK
+        +VARCHAR password
+        +ENUM rol
+        +DATETIME fecha_registro
+    }
+
+    class ALUMNOS {
+        +INT id_alumno PK
+        +INT id_usuario FK,UK
+        +VARCHAR ciclo
+        +INT curso
+        +VARCHAR centro
+        +VARCHAR localidad
+        +TEXT descripcion
+        +VARCHAR cv
+    }
+
+    class EMPRESAS {
+        +INT id_empresa PK
+        +INT id_usuario FK,UK
+        +VARCHAR nombre
+        +TEXT descripcion
+        +VARCHAR web
+        +VARCHAR localidad
+        +VARCHAR direccion
+        +DECIMAL latitud
+        +DECIMAL longitud
+        +VARCHAR telefono
+        +BOOLEAN verificada
+    }
+
+    class OFERTAS {
+        +INT id_oferta PK
+        +INT id_empresa FK
+        +VARCHAR titulo
+        +TEXT descripcion
+        +VARCHAR ciclo
+        +VARCHAR localidad
+        +ENUM modalidad
+        +BOOLEAN remunerada
+        +DECIMAL salario
+        +INT plazas
+        +DATETIME fecha_publicacion
+        +DATE fecha_limite
+        +BOOLEAN activa
+    }
+
+    class TECNOLOGIAS {
+        +INT id_tecnologia PK
+        +VARCHAR nombre UK
+    }
+
+    class ALUMNO_TECNOLOGIA {
+        +INT id_alumno PK,FK
+        +INT id_tecnologia PK,FK
+        +ENUM nivel
+    }
+
+    class OFERTA_TECNOLOGIA {
+        +INT id_oferta PK,FK
+        +INT id_tecnologia PK,FK
+        +BOOLEAN obligatoria
+    }
+
+    class CANDIDATURAS {
+        +INT id_candidatura PK
+        +INT id_alumno FK
+        +INT id_oferta FK
+        +DATETIME fecha
+        +ENUM estado
+    }
+
+    class FAVORITOS {
+        +INT id_alumno PK,FK
+        +INT id_oferta PK,FK
+        +DATETIME fecha
+    }
+
+    class PROYECTOS {
+        +INT id_proyecto PK
+        +INT id_alumno FK
+        +VARCHAR titulo
+        +TEXT descripcion
+        +VARCHAR url_github
+        +VARCHAR url_demo
+        +VARCHAR url_imagen
+        +DATETIME fecha_creacion
+    }
+
+    class PROYECTO_TECNOLOGIA {
+        +INT id_proyecto PK,FK
+        +INT id_tecnologia PK,FK
+    }
+
+    class VALORACIONES {
+        +INT id_valoracion PK
+        +INT id_alumno FK
+        +INT id_empresa FK
+        +INT puntuacion
+        +TEXT comentario
+        +DATETIME fecha
+        +BOOLEAN aprobada
+    }
+
+    class FASES_SELECCION {
+        +INT id_fase PK
+        +INT id_oferta FK
+        +VARCHAR nombre
+        +TEXT descripcion
+        +INT orden
+        +INT duracion_dias
+        +BOOLEAN obligatoria
+    }
+
+    USUARIOS "1" --> "0..1" ALUMNOS : id_usuario
+    USUARIOS "1" --> "0..1" EMPRESAS : id_usuario
+    EMPRESAS "1" --> "0..*" OFERTAS : id_empresa
+
+    ALUMNOS "1" --> "0..*" ALUMNO_TECNOLOGIA : id_alumno
+    TECNOLOGIAS "1" --> "0..*" ALUMNO_TECNOLOGIA : id_tecnologia
+
+    OFERTAS "1" --> "0..*" OFERTA_TECNOLOGIA : id_oferta
+    TECNOLOGIAS "1" --> "0..*" OFERTA_TECNOLOGIA : id_tecnologia
+
+    ALUMNOS "1" --> "0..*" CANDIDATURAS : id_alumno
+    OFERTAS "1" --> "0..*" CANDIDATURAS : id_oferta
+
+    ALUMNOS "1" --> "0..*" FAVORITOS : id_alumno
+    OFERTAS "1" --> "0..*" FAVORITOS : id_oferta
+
+    ALUMNOS "1" --> "0..*" PROYECTOS : id_alumno
+    PROYECTOS "1" --> "0..*" PROYECTO_TECNOLOGIA : id_proyecto
+    TECNOLOGIAS "1" --> "0..*" PROYECTO_TECNOLOGIA : id_tecnologia
+
+    ALUMNOS "1" --> "0..*" VALORACIONES : id_alumno
+    EMPRESAS "1" --> "0..*" VALORACIONES : id_empresa
+
+    OFERTAS "1" --> "0..*" FASES_SELECCION : id_oferta
